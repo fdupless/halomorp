@@ -12,7 +12,7 @@ import matplotlib.colors as colors
 import matplotlib.cm as cmx
 import globalvars as gv
 
-reload(gv)
+
 import stochMorp as sM
 
 reload(sM)

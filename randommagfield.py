@@ -10,7 +10,7 @@ import itertools
 from scipy.linalg import expm3, norm
 import globalvars as gv
 
-reload(gv)
+
 
 # Lcutoff=10.0 #cutoff at this value in Mpc
 # BoxSize=1280

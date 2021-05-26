@@ -11,7 +11,7 @@ if not sys.version_info[0] < 3:
 reload(UI)
 import globalvars as gv
 
-reload(gv)
+
 
 # ------------------------------#unit vectors------------------------
 xhat = np.array([1, 0, 0])

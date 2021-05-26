@@ -13,7 +13,6 @@ import randommagfield as rmf
 reload(rmf)
 import globalvars as gv
 
-reload(gv)
 import constraints as co
 
 reload(co)
@@ -31,8 +30,8 @@ NumEventsDefault = 1000
 
 path = "sim_data/dists/EbinList.npy"
 if not os.path.exists(path):
-    print("Distributions do not exist, setting UI.STODE==0")
-    gv.STODE == 0
+    print("Distributions do not exist, setting UI.STODE=0")
+    gv.STODE = 0
 else:
     edists = np.load("sim_data/dists/EbinList.npy")
     dist = [

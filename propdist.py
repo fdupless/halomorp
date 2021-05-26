@@ -5,7 +5,7 @@ if not sys.version_info[0] < 3:
     from importlib import reload
 import globalvars as gv
 
-reload(gv)
+
 import matplotlib.pyplot as plt
 
 

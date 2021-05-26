@@ -26,7 +26,7 @@ import qstatistics as qs
 reload(qs)
 import globalvars as gv
 
-reload(gv)
+
 import constraints as co
 
 reload(co)
@@ -47,7 +47,8 @@ def fixed_aspect_ratio(ratio, ax):
 
     xrange = xvals[1] - xvals[0]
     yrange = yvals[1] - yvals[0]
-    ax.set_aspect(ratio * (xrange / yrange), adjustable="box")
+    #ax.set_aspect(ratio * (xrange / yrange), adjustable="box")
+    #ax.set_aspect("auto", adjustable="box")
 
 
 def createplot3DEvs(cn, i, jet=False, sizemarker=5):
@@ -71,7 +72,7 @@ def createplot3DEvs(cn, i, jet=False, sizemarker=5):
             surfaceData[j][0],
             surfaceData[j][1],
             surfaceData[j][2],
-            c=scalarMap.to_rgba(evsangle[j][2]),
+            c=[scalarMap.to_rgba(evsangle[j][2])],
             lw=0,
             s=sizemarker,
         )
@@ -188,6 +189,7 @@ def SimEvent(ds, NumPhotons, cn=1, rmf_switch=False, B0=gv.B0):
             # print(Egg,np.sqrt(Egg/77.0)*10)
 
         dg = gv.drawMFPg(EggT, gv.zE(ds))
+
         if gv.STODE == 1:
             ind = len(edists[edists < Eelini]) - 1
             tau0, Egg = pd.drawLeptonICevent(dist[ind], pdf_E[ind])
@@ -202,6 +204,7 @@ def SimEvent(ds, NumPhotons, cn=1, rmf_switch=False, B0=gv.B0):
         else:
             Egg = EggT
             tau0 = gv.De(gv.zE(ds), gv.Ee(Egg, gv.zE(ds)))
+            avgR=0
 
         if np.random.uniform() > 0.5:
             SignTheta = 1
@@ -322,7 +325,9 @@ def JetEvs(NumJets=10, omega=5 * gv.degrad, cn=1, doplots=False, jetfix=True):
         injet = np.array(injet)
         jetevs = events[injet]
         Erange = [min(evsangle[:, 2]), max(evsangle[:, 2])]
-        # if(len(jetevs)<=2): print('Not enough events')
+        if(len(jetevs)<=2):
+            print('Not enough events')
+            return
         attempts = attempts + 1
         if len(jetevs) > 2 or attempts == 20:
             jetcount = jetcount + 1
@@ -366,17 +371,23 @@ def QJets(NumJets=1, cn=1, NumEBins=3, UseUIBins=False, Qstart="Q_", CQ=0):
     Q = []
     evs = [[] for j in range(NumJets)]
     for jetcount in range(NumJets):
-        evsangtemp = np.loadtxt(
-            "sim_data/3devents/case" + str(cn) + "/jetang_" + str(jetcount + 1)
-        )
-        evstemp = np.array(
-            [
-                gv.angulartocart(evsangtemp[i][3], evsangtemp[i][1])
-                for i in range(len(evsangtemp))
-            ]
-        )
 
-        En = evsangtemp[:, 2]
+        # hack to make this keep working if there is no events found
+        try:
+            evsangtemp = np.loadtxt(
+                "sim_data/3devents/case" + str(cn) + "/jetang_" + str(jetcount + 1)
+            )
+            evstemp = np.array(
+                [
+                    gv.angulartocart(evsangtemp[i][3], evsangtemp[i][1])
+                    for i in range(len(evsangtemp))
+                ]
+            )
+            En = evsangtemp[:, 2]
+        except:
+            print(f"No events found for cn = {cn}, skipping")
+            return Q
+
         EnS = np.sort(En)
         ind = np.array([np.where(En == EnS[i])[0][0] for i in range(len(En))])
         if UseUIBins:
@@ -548,9 +559,9 @@ def SimNHalos(
             else:
                 rmf.setB = rmf.createB_one_K_uni(kmode, Nmodes, hel=hel, B0=B0)
             co.B = rmf.Banalytic
-        # start=time.clock()
+        start = time.clock()
         SimEvent(1000, Nphotons, cn=cns + i, B0=B0)
-        # print(time.clock()-start)
+        print(f"Generated Sim {i} in {time.clock()-start}s")
         JetEvs(NumJets=njets, omega=omega, cn=cns + i, jetfix=jetfix)
         QJets(NumJets=njets, cn=cns + i, UseUIBins=UseUIBins, CQ=CQ)
 
@@ -864,6 +875,7 @@ def QsPlot(
     if plotinCN:
         fig.savefig(directory + "Qplot_" + name, dpi=150)
     else:
+        os.makedirs("sim_data/QSimPlots", exist_ok=True)
         fig.savefig("sim_data/QSimPlots/Q_" + name, dpi=150)
     plt.clf()
     plt.close()
@@ -967,6 +979,7 @@ def Qhist(evsnum, name="_", Qstart="Q_", nbins=100, maxq=0, screwupsign=1):
 
     plt.tight_layout()
 
+    os.makedirs("sim_data/QSimPlots", exist_ok=True)
     fig.savefig("sim_data/QSimPlots/Qhisto_" + name, dpi=150)
     plt.close()
 
@@ -1032,13 +1045,13 @@ def showfig(
 
     gs = gridspec.GridSpec(njets, nplots)
 
-    ax1 = [plt.subplot(gs[i, 0], axisbg="white") for i in range(njets)]
+    ax1 = [plt.subplot(gs[i, 0], facecolor="white") for i in range(njets)]
     if show3dplots:
-        ax2 = [plt.subplot(gs[i, 1], axisbg="white") for i in range(njets)]
+        ax2 = [plt.subplot(gs[i, 1], facecolor="white") for i in range(njets)]
     if showQs:
-        ax3 = [plt.subplot(gs[i, 2], axisbg="white") for i in range(njets)]
+        ax3 = [plt.subplot(gs[i, 2], facecolor="white") for i in range(njets)]
     if phHel:
-        ax4 = [plt.subplot(gs[i, 3], axisbg="white") for i in range(njets)]
+        ax4 = [plt.subplot(gs[i, 3], facecolor="white") for i in range(njets)]
     for i in range(njets):
 
         ax1[i].imshow(imgs[i])
