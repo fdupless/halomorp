@@ -12,7 +12,6 @@ reload(UI)
 import globalvars as gv
 
 
-
 # ------------------------------#unit vectors------------------------
 xhat = np.array([1, 0, 0])
 yhat = np.array([0, 1, 0])

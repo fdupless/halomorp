@@ -47,8 +47,8 @@ def fixed_aspect_ratio(ratio, ax):
 
     xrange = xvals[1] - xvals[0]
     yrange = yvals[1] - yvals[0]
-    #ax.set_aspect(ratio * (xrange / yrange), adjustable="box")
-    #ax.set_aspect("auto", adjustable="box")
+    # ax.set_aspect(ratio * (xrange / yrange), adjustable="box")
+    # ax.set_aspect("auto", adjustable="box")
 
 
 def createplot3DEvs(cn, i, jet=False, sizemarker=5):
@@ -204,7 +204,7 @@ def SimEvent(ds, NumPhotons, cn=1, rmf_switch=False, B0=gv.B0):
         else:
             Egg = EggT
             tau0 = gv.De(gv.zE(ds), gv.Ee(Egg, gv.zE(ds)))
-            avgR=0
+            avgR = 0
 
         if np.random.uniform() > 0.5:
             SignTheta = 1
@@ -325,8 +325,8 @@ def JetEvs(NumJets=10, omega=5 * gv.degrad, cn=1, doplots=False, jetfix=True):
         injet = np.array(injet)
         jetevs = events[injet]
         Erange = [min(evsangle[:, 2]), max(evsangle[:, 2])]
-        if(len(jetevs)<=2):
-            print('Not enough events')
+        if len(jetevs) <= 2:
+            print("Not enough events")
             return
         attempts = attempts + 1
         if len(jetevs) > 2 or attempts == 20:

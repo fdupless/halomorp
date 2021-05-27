@@ -11,7 +11,6 @@ from scipy.linalg import expm3, norm
 import globalvars as gv
 
 
-
 # Lcutoff=10.0 #cutoff at this value in Mpc
 # BoxSize=1280
 # nlattice=BoxSize/Lcutoff #half of the size of mag field/cutoff distance, both in Mpc
